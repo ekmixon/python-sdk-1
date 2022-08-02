@@ -92,10 +92,9 @@ class ActorRuntimeConfig:
         }
 
         if self._reentrancy:
-            configDict.update({'reentrancy': self._reentrancy.as_dict()})
+            configDict['reentrancy'] = self._reentrancy.as_dict()
 
         if self._reminders_storage_partitions:
-            configDict.update(
-                {'remindersStoragePartitions': self._reminders_storage_partitions})
+            configDict['remindersStoragePartitions'] = self._reminders_storage_partitions
 
         return configDict

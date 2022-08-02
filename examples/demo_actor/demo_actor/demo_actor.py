@@ -59,7 +59,7 @@ class DemoActor(Actor, DemoActorInterface, Remindable):
         else:
             # Unregister 'demo_reminder'
             await self.unregister_reminder('demo_reminder')
-        print(f'set reminder is done', flush=True)
+        print('set reminder is done', flush=True)
 
     async def set_timer(self, enabled) -> None:
         """Enables and disables a timer.
@@ -79,7 +79,7 @@ class DemoActor(Actor, DemoActorInterface, Remindable):
         else:
             # Unregister 'demo_timer'
             await self.unregister_timer('demo_timer')
-        print(f'set_timer is done', flush=True)
+        print('set_timer is done', flush=True)
     
     async def timer_callback(self, state) -> None:
         """A callback which will be called whenever timer is triggered.
@@ -92,4 +92,4 @@ class DemoActor(Actor, DemoActorInterface, Remindable):
     async def receive_reminder(self, name: str, state: bytes,
                                due_time: datetime.timedelta, period: datetime.timedelta) -> None:
         """A callback which will be called when reminder is triggered."""
-        print(f'receive_reminder is called - {name} reminder - {str(state)}', flush=True)
+        print(f'receive_reminder is called - {name} reminder - {state}', flush=True)

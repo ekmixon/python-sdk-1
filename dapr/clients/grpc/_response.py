@@ -62,9 +62,7 @@ class DaprResponse:
         Returns:
             dict or tuple: response headers.
         """
-        if as_dict:
-            return tuple_to_dict(self._headers)
-        return self._headers
+        return tuple_to_dict(self._headers) if as_dict else self._headers
 
 
 class InvokeMethodResponse(DaprResponse):

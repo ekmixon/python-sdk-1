@@ -146,10 +146,7 @@ class _CallbackServicer(appcallback_service_v1.AppCallbackServicer):
         if len(resp_data.get_headers()) > 0:
             context.send_initial_metadata(resp_data.get_headers())
 
-        content_type = ""
-        if resp_data.content_type:
-            content_type = resp_data.content_type
-
+        content_type = resp_data.content_type or ""
         return common_v1.InvokeResponse(
             data=resp_data.proto, content_type=content_type)
 

@@ -139,7 +139,7 @@ def wrap_response(
         response_obj = {
             'message': msg,
         }
-        if not (status >= 200 and status < 300) and error_code:
+        if (status < 200 or status >= 300) and error_code:
             response_obj['errorCode'] = error_code
         resp = make_response(jsonify(response_obj), status)
     elif isinstance(msg, bytes):

@@ -217,9 +217,7 @@ class DaprGrpcClient:
         if http_verb:
             http_ext = self._get_http_extension(http_verb, http_querystring)
 
-        content_type = ""
-        if req_data.content_type:
-            content_type = req_data.content_type
+        content_type = req_data.content_type or ""
         req = api_v1.InvokeServiceRequest(
             id=app_id,
             message=common_v1.InvokeRequest(
@@ -331,15 +329,8 @@ class DaprGrpcClient:
             raise ValueError(f'invalid type for data {type(data)}')
 
         req_data: bytes
-        if isinstance(data, bytes):
-            req_data = data
-        else:
-            if isinstance(data, str):
-                req_data = data.encode('utf-8')
-
-        content_type = ""
-        if data_content_type:
-            content_type = data_content_type
+        req_data = data if isinstance(data, bytes) else data.encode('utf-8')
+        content_type = data_content_type or ""
         req = api_v1.PublishEventRequest(
             pubsub_name=pubsub_name,
             topic=topic_name,
@@ -383,7 +374,7 @@ class DaprGrpcClient:
             and value obtained from the state store
         """
 
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
         req = api_v1.GetStateRequest(store_name=store_name, key=key, metadata=state_metadata)
         response, call = self._stub.GetState.with_call(req, metadata=metadata)
@@ -426,7 +417,7 @@ class DaprGrpcClient:
             and value obtained from the state store
         """
 
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
         req = api_v1.GetBulkStateRequest(
             store_name=store_name,
@@ -435,14 +426,13 @@ class DaprGrpcClient:
             metadata=states_metadata)
         response, call = self._stub.GetBulkState.with_call(req, metadata=metadata)
 
-        items = []
-        for item in response.items:
-            items.append(
-                BulkStateItem(
-                    key=item.key,
-                    data=item.data,
-                    etag=item.etag,
-                    error=item.error))
+        items = [
+            BulkStateItem(
+                key=item.key, data=item.data, etag=item.etag, error=item.error
+            )
+            for item in response.items
+        ]
+
         return BulkStatesResponse(
             items=items,
             headers=call.initial_metadata())
@@ -498,14 +488,10 @@ class DaprGrpcClient:
 
         req_value = value
 
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
 
-        if options is None:
-            state_options = None
-        else:
-            state_options = options.get_proto()
-
+        state_options = None if options is None else options.get_proto()
         state = common_v1.StateItem(
             key=key,
             value=to_bytes(req_value),
@@ -551,10 +537,10 @@ class DaprGrpcClient:
             ValueError: states is empty
             ValueError: store_name is empty
         """
-        if not states or len(states) == 0:
+        if not states:
             raise ValueError("States to be saved cannot be empty")
 
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
 
         req_states = [common_v1.StateItem(
@@ -608,7 +594,7 @@ class DaprGrpcClient:
         Returns:
             :class:`DaprResponse` gRPC metadata returned from callee
         """
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
         req_ops = [api_v1.TransactionalStateOperation(
             operationType=o.operation_type.value,
@@ -666,14 +652,10 @@ class DaprGrpcClient:
             :class:`DaprResponse` gRPC metadata returned from callee
         """
 
-        if not store_name or len(store_name) == 0 or len(store_name.strip()) == 0:
+        if not store_name or not store_name.strip():
             raise ValueError("State store name cannot be empty")
 
-        if options is None:
-            state_options = None
-        else:
-            state_options = options.get_proto()
-
+        state_options = None if options is None else options.get_proto()
         etag_object = common_v1.Etag(value=etag) if etag is not None else None
         req = api_v1.DeleteStateRequest(store_name=store_name, key=key,
                                         etag=etag_object, options=state_options,
@@ -779,9 +761,11 @@ class DaprGrpcClient:
         secrets_map = {}
         for key in response.data.keys():
             secret_response = response.data[key]
-            secrets_submap = {}
-            for subkey in secret_response.secrets.keys():
-                secrets_submap[subkey] = secret_response.secrets[subkey]
+            secrets_submap = {
+                subkey: secret_response.secrets[subkey]
+                for subkey in secret_response.secrets.keys()
+            }
+
             secrets_map[key] = secrets_submap
 
         return GetBulkSecretResponse(

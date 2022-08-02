@@ -68,9 +68,7 @@ class ActorReminderData:
 
     def as_dict(self) -> Dict[str, Any]:
         """Gets :class:`ActorReminderData` as a dict object."""
-        encoded_state = None
-        if self._state is not None:
-            encoded_state = base64.b64encode(self._state)
+        encoded_state = None if self._state is None else base64.b64encode(self._state)
         return {
             'reminderName': self._reminder_name,
             'dueTime': self._due_time,

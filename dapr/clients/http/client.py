@@ -38,10 +38,7 @@ class DaprHttpClient:
         self._headers_callback = headers_callback
 
     def get_api_url(self) -> str:
-        return 'http://{}:{}/{}'.format(
-            settings.DAPR_RUNTIME_HOST,
-            settings.DAPR_HTTP_PORT,
-            settings.DAPR_API_VERSION)
+        return f'http://{settings.DAPR_RUNTIME_HOST}:{settings.DAPR_HTTP_PORT}/{settings.DAPR_API_VERSION}'
 
     async def send_bytes(
             self, method: str, url: str,
@@ -58,7 +55,7 @@ class DaprHttpClient:
 
         if self._headers_callback is not None:
             trace_headers = self._headers_callback()
-            headers_map.update(trace_headers)
+            headers_map |= trace_headers
 
         r = None
         async with aiohttp.ClientSession(timeout=self._timeout) as session:

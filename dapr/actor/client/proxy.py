@@ -64,7 +64,7 @@ class CallableProxy:
             raise ValueError('does not support multiple arguments')
 
         bytes_data = None
-        if len(args) > 0:
+        if args:
             if isinstance(args[0], bytes):
                 bytes_data = args[0]
             else:
@@ -128,7 +128,7 @@ class ActorProxy:
         Returns:
             :class:`ActorProxy': new Actor Proxy client.
         """
-        factory = cls._default_proxy_factory if not actor_proxy_factory else actor_proxy_factory
+        factory = actor_proxy_factory or cls._default_proxy_factory
         return factory.create(actor_type, actor_id, actor_interface)
 
     async def invoke_method(self, method: str, raw_body: Optional[bytes] = None) -> bytes:

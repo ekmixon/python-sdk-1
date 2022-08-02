@@ -29,7 +29,7 @@ class TypeUtilsTests(unittest.TestCase):
 
     def test_get_method_arg_types(self):
         arg_types = get_method_arg_types(FakeSimpleActor.non_actor_method)
-        self.assertEqual(arg_types, [type(int(30)), type(str("102")), type(float(10.0))])
+        self.assertEqual(arg_types, [type(30), type("102"), type(10.0)])
 
     def test_get_return_types(self):
         rtn_type = get_method_return_types(FakeSimpleActor.actor_method)

@@ -26,8 +26,8 @@ class FakeDaprSidecar(api_service_v1.DaprServicer):
         trailers = ()
 
         for k, v in context.invocation_metadata():
-            headers = headers + (('h' + k, v), )
-            trailers = trailers + (('t' + k, v), )
+            headers = headers + ((f'h{k}', v), )
+            trailers = trailers + ((f't{k}', v), )
 
         resp = GrpcAny()
         content_type = ''
@@ -48,8 +48,8 @@ class FakeDaprSidecar(api_service_v1.DaprServicer):
         trailers = ()
 
         for k, v in request.metadata.items():
-            headers = headers + (('h' + k, v), )
-            trailers = trailers + (('t' + k, v), )
+            headers = headers + ((f'h{k}', v), )
+            trailers = trailers + ((f't{k}', v), )
 
         resp_data = b'INVALID'
         metadata = {}
@@ -116,11 +116,10 @@ class FakeDaprSidecar(api_service_v1.DaprServicer):
         key = request.key
         if key not in self.store:
             return empty_pb2.Empty()
-        else:
-            data, etag = self.store[key]
-            if request.metadata["upper"]:
-                data = to_bytes(data.decode("utf-8").upper())
-            return api_v1.GetStateResponse(data=data, etag=etag)
+        data, etag = self.store[key]
+        if request.metadata["upper"]:
+            data = to_bytes(data.decode("utf-8").upper())
+        return api_v1.GetStateResponse(data=data, etag=etag)
 
     def GetBulkState(self, request, context):
         items = []
@@ -140,9 +139,8 @@ class FakeDaprSidecar(api_service_v1.DaprServicer):
         key = request.key
         if key in self.store:
             del self.store[key]
-        else:
-            if request.metadata["must_delete"]:
-                raise ValueError("delete failed")
+        elif request.metadata["must_delete"]:
+            raise ValueError("delete failed")
 
         context.send_initial_metadata(headers)
         context.set_trailing_metadata(trailers)

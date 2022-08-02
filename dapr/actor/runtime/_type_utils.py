@@ -15,7 +15,7 @@ def get_class_method_args(func: Any) -> List[str]:
     args = func.__code__.co_varnames[:func.__code__.co_argcount]
 
     # Exclude self, cls arguments
-    if args[0] == 'self' or args[0] == 'cls':
+    if args[0] in ['self', 'cls']:
         args = args[1:]
     return list(args)
 
@@ -101,9 +101,4 @@ def get_actor_interfaces(cls: Type[Actor]) -> List[Type[ActorInterface]]:
     Returns:
         List: the list of classes that inherit :class:`ActorInterface`.
     """
-    actor_bases = []
-    for cl in cls.mro():
-        if ActorInterface in cl.__bases__:
-            actor_bases.append(cl)
-
-    return actor_bases
+    return [cl for cl in cls.mro() if ActorInterface in cl.__bases__]

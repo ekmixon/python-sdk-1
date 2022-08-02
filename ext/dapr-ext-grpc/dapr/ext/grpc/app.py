@@ -33,10 +33,12 @@ class App:
             kwargs: arguments to grpc.server()
         """
         self._servicer = _CallbackServicer()
-        if not kwargs:
-            self._server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))   # type: ignore
-        else:
-            self._server = grpc.server(**kwargs)   # type: ignore
+        self._server = (
+            grpc.server(**kwargs)
+            if kwargs
+            else grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+        )
+
         appcallback_service_v1.add_AppCallbackServicer_to_server(self._servicer, self._server)
 
     def __del__(self):

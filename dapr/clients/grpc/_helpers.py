@@ -129,11 +129,14 @@ class DaprClientInterceptor(UnaryUnaryClientInterceptor):
             metadata = list(client_call_details.metadata)
         metadata.extend(self._metadata)
 
-        new_call_details = _ClientCallDetails(
-            client_call_details.method, client_call_details.timeout, metadata,
-            client_call_details.credentials, client_call_details.wait_for_ready,
-            client_call_details.compression)
-        return new_call_details
+        return _ClientCallDetails(
+            client_call_details.method,
+            client_call_details.timeout,
+            metadata,
+            client_call_details.credentials,
+            client_call_details.wait_for_ready,
+            client_call_details.compression,
+        )
 
     def intercept_unary_unary(
             self,
@@ -155,6 +158,4 @@ class DaprClientInterceptor(UnaryUnaryClientInterceptor):
 
         # Pre-process or intercept call
         new_call_details = self._intercept_call(client_call_details)
-        # Call continuation
-        response = continuation(new_call_details, request)
-        return response
+        return continuation(new_call_details, request)

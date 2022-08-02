@@ -98,8 +98,10 @@ class ActorStateManager(Generic[T]):
             state_metadata = state_change_tracker[state_name]
             state_metadata.value = value
 
-            if state_metadata.change_kind == StateChangeKind.none \
-                    or state_metadata.change_kind == StateChangeKind.remove:
+            if state_metadata.change_kind in [
+                StateChangeKind.none,
+                StateChangeKind.remove,
+            ]:
                 state_metadata.change_kind = StateChangeKind.update
             state_change_tracker[state_name] = state_metadata
             return
@@ -221,7 +223,7 @@ class ActorStateManager(Generic[T]):
                 states_to_remove.append(state_name)
             # Mark the states as unmodified so that tracking for next invocation is done correctly.
             state_metadata.change_kind = StateChangeKind.none
-        if len(state_changes) > 0:
+        if state_changes:
             await self._actor.runtime_ctx.state_provider.save_state(
                 self._type_name, self._actor.id.id, state_changes)
         for state_name in states_to_remove:

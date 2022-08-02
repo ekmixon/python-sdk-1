@@ -31,8 +31,8 @@ def convert_from_dapr_duration(duration: str) -> timedelta:
 
     if matched.group('hours') is not None:
         days, hours = divmod(float(matched.group('hours')), 24)
-    mins = 0.0 if not matched.group('mins') else float(matched.group('mins'))
-    seconds = 0.0 if not matched.group('seconds') else float(matched.group('seconds'))
+    mins = float(matched.group('mins')) if matched.group('mins') else 0.0
+    seconds = float(matched.group('seconds')) if matched.group('seconds') else 0.0
 
     return timedelta(
         days=days,

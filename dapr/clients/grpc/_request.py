@@ -55,9 +55,7 @@ class DaprRequest:
         Returns:
             dict or tuple: request metadata.
         """
-        if as_dict:
-            return tuple_to_dict(self._metadata)
-        return self._metadata
+        return tuple_to_dict(self._metadata) if as_dict else self._metadata
 
 
 class InvokeMethodRequest(DaprRequest):

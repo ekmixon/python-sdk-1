@@ -44,12 +44,7 @@ class ActorId:
         return self._id
 
     def __eq__(self, other):
-        if not other:
-            return False
-        return self._id == other.id
+        return self._id == other.id if other else False
 
     def __ne__(self, other):
-        if not other:
-            return False
-
-        return self._id != other.id
+        return self._id != other.id if other else False

@@ -24,8 +24,7 @@ def connect_dapr(port: Optional[int] = -1):
     if port == -1:
         port = settings.DAPR_GRPC_PORT
     channel = grpc.insecure_channel(f"127.0.0.1:{port}")
-    stub = api_service_v1.DaprStub(channel)
-    yield stub
+    yield api_service_v1.DaprStub(channel)
     channel.close()
 
 

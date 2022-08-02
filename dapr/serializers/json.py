@@ -61,7 +61,7 @@ class DaprJSONEncoder(json.JSONEncoder):
             if obj.microsecond:
                 r = r[:23] + r[26:]
             if r.endswith('+00:00'):
-                r = r[:-6] + 'Z'
+                r = f'{r[:-6]}Z'
             return r
         elif isinstance(obj, datetime.date):
             return obj.isoformat()

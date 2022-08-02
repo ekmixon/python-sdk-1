@@ -29,14 +29,13 @@ def _wrap_response(
         response_obj = {
             'message': msg,
         }
-        if not (status_code >= 200 and status_code < 300) and error_code:
+        if (status_code < 200 or status_code >= 300) and error_code:
             response_obj['errorCode'] = error_code
-        resp = JSONResponse(content=response_obj, status_code=status_code)
+        return JSONResponse(content=response_obj, status_code=status_code)
     elif isinstance(msg, bytes):
-        resp = Response(content=msg, media_type=content_type)
+        return Response(content=msg, media_type=content_type)
     else:
-        resp = JSONResponse(content=msg, status_code=status_code)
-    return resp
+        return JSONResponse(content=msg, status_code=status_code)
 
 
 class DaprActor(object):

@@ -60,7 +60,7 @@ class ActorRuntime:
     @classmethod
     def get_registered_actor_types(cls) -> List[str]:
         """Gets registered actor types."""
-        return [actor_type for actor_type in cls._actor_managers.keys()]
+        return list(cls._actor_managers.keys())
 
     @classmethod
     async def deactivate(cls, actor_type_name: str, actor_id: str) -> None:

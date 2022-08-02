@@ -54,7 +54,7 @@ with DaprClient() as d:
     except grpc.RpcError as err:
         # StatusCode should be StatusCode.ABORTED.
         print(f"Cannot save bulk due to bad etags. ErrorCode={err.code()}")
-        
+
         # For detailed error messages from the dapr runtime:
         # print(f"Details={err.details()})
 

@@ -32,8 +32,10 @@ class UtilTests(unittest.TestCase):
     def test_convert_invalid_duration(self):
         with self.assertRaises(ValueError) as exeception_context:
             convert_from_dapr_duration('invalid')
-        self.assertEqual(exeception_context.exception.args[0],
-                         "Invalid Dapr Duration format: '{}'".format('invalid'))
+        self.assertEqual(
+            exeception_context.exception.args[0],
+            "Invalid Dapr Duration format: 'invalid'",
+        )
 
     def test_convert_timedelta_to_dapr_duration(self):
         duration = convert_to_dapr_duration(timedelta(hours=4, minutes=15, seconds=40))
@@ -43,8 +45,11 @@ class UtilTests(unittest.TestCase):
         TESTSTRING = '4h15m40shello'
         with self.assertRaises(ValueError) as exeception_context:
             convert_from_dapr_duration(TESTSTRING)
-        self.assertEqual(exeception_context.exception.args[0],
-                         "Invalid Dapr Duration format: '{}'".format(TESTSTRING))
+        self.assertEqual(
+            exeception_context.exception.args[0],
+            f"Invalid Dapr Duration format: '{TESTSTRING}'",
+        )
+
         decoded = json.loads(json.dumps({"somevar": TESTSTRING}), cls=DaprJSONDecoder)
         self.assertEqual(decoded['somevar'], TESTSTRING)
 
